@@ -9,3 +9,8 @@ A centralized digital platform designed to streamline campus recruitment for Stu
 - **TPO Module**: Company job posting review and drive scheduling.
 - **Student Module**: Academic profiling and placement eligibility verification.
 - **Recruitment Pipeline**: Multi-round applicant tracking and results publication.
+## Week 1 Milestone Completed
+- Core Express server + MongoDB connection established.
+- User, ActivityLog, Student, and Company schemas implemented.
+- 3-step Student Registration API (Email OTP Verification + Password Setting).
+- Multi-role Login UI and Session Manager.

@@ -1,0 +1,47 @@
+========================================
+College Placement Portal - Jenkins Test Feedback
+========================================
+
+Build Number : 1
+Job Name     : Placement_Portal_CI
+Branch       : utkarsh_kumar
+Commit       : 830675efe152996c898f6f8373569522c8493b08
+Date         : 2026-08-19 10:30:00
+
+TEST SUMMARY
+----------------------------------------
+Total Tests  : 1
+Passed       : 0
+Failed       : 2
+Skipped      : 0
+Errors       : 0
+Overall      : FAIL
+
+TEST CASE RESULTS
+----------------------------------------
+College Placement Management Portal - Backend API "before all" hook in "College Placement Management Portal - Backend API" (Cannot find module '../controllers/studentController') : FAIL
+========================================
+
+========================================
+College Placement Portal - Jenkins Test Feedback
+========================================
+
+Build Number : 1
+Job Name     : Placement_Portal_CI
+Branch       : utkarsh_gupta
+Commit       : 3ec2e6127c38bc694bac6f2ff3342c4402c78ba0
+Date         : 2026-08-18 21:39:07
+
+TEST SUMMARY
+----------------------------------------
+Total Tests  : 1
+Passed       : 1
+Failed       : 0
+Skipped      : 0
+Errors       : 0
+Overall      : PASS
+
+TEST CASE RESULTS
+----------------------------------------
+Frontend Verification > DOM & Client Structure Integrity : PASS
+========================================

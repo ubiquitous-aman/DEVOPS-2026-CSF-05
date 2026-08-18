@@ -14,3 +14,8 @@ A centralized digital platform designed to streamline campus recruitment for Stu
 - User, ActivityLog, Student, and Company schemas implemented.
 - 3-step Student Registration API (Email OTP Verification + Password Setting).
 - Multi-role Login UI and Session Manager.
+## Week 2 Milestone Completed
+- TPO Drive creation with academic eligibility criteria and multi-round timetables.
+- Company registration and approval verification system.
+- Student resume uploading using Multer disk storage.
+- Dynamic shell layout engine powering student and TPO portal navigation.

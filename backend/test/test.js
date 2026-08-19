@@ -1,0 +1,218 @@
+/**
+ * backend/test/test.js
+ * Comprehensive automated test suite for College Placement Portal Backend API.
+ * Uses mongodb-memory-server for full in-memory database isolation.
+ */
+process.env.NODE_ENV = 'test';
+process.env.JWT_SECRET = 'test_jwt_secret_devops_2026';
+delete process.env.EMAIL_USER;
+delete process.env.EMAIL_PASS;
+
+const { expect } = require('chai');
+const request = require('supertest');
+const mongoose = require('mongoose');
+const { MongoMemoryServer } = require('mongodb-memory-server');
+
+let mongoServer;
+let app;
+
+describe('College Placement Management Portal - Backend API', function () {
+    this.timeout(20000);
+
+    let studentToken, companyToken, adminToken, tpoToken;
+    let driveId, applicationId;
+
+    before(async () => {
+        mongoServer = await MongoMemoryServer.create();
+        process.env.MONGO_URI = mongoServer.getUri();
+        await mongoose.connect(process.env.MONGO_URI);
+
+        app = require('../server');
+
+        const User = require('../models/User');
+        await User.create({ name: 'System Admin', email: 'admin@placement.edu', password: 'Admin@123', role: 'admin' });
+        await User.create({ name: 'Placement Officer', email: 'tpo@placement.edu', password: 'Tpo@1234', role: 'tpo' });
+    });
+
+    after(async () => {
+        await mongoose.disconnect();
+        await mongoServer.stop();
+    });
+
+    // =========================================================================
+    // SECTION 1: Health & Server Initialization
+    // =========================================================================
+    describe('Health Check & Server Initialization', () => {
+        it('GET /api/health should return 200 with active status', async () => {
+            const res = await request(app).get('/api/health');
+            expect(res.status).to.equal(200);
+            expect(res.body.success).to.equal(true);
+        });
+    });
+
+    // =========================================================================
+    // SECTION 2: Authentication & Student Registration (3-Step OTP)
+    // =========================================================================
+    describe('Authentication & Student Registration (3-Step OTP)', () => {
+        let setupToken;
+
+        it('Step 1: initiates student registration and returns test OTP', async () => {
+            const res = await request(app).post('/api/auth/register/student/initiate').send({
+                name: 'Aman Sharma',
+                email: 'aman@student.edu',
+                rollNumber: '2026CS101',
+                branch: 'CSE',
+                batch: 2026,
+                phone: '9876543210'
+            });
+            expect(res.status).to.equal(200);
+            expect(res.body.success).to.equal(true);
+            expect(res.body.otpForTesting).to.be.a('string');
+        });
+
+        it('Step 1: rejects student registration with duplicate email', async () => {
+            const User = require('../models/User');
+            await User.create({ name: 'Existing Student', email: 'existing@student.edu', password: 'Password@123', role: 'student', emailVerified: true });
+
+            const res = await request(app).post('/api/auth/register/student/initiate').send({
+                name: 'Duplicate Student',
+                email: 'existing@student.edu',
+                rollNumber: '2026CS102',
+                branch: 'CSE',
+                batch: 2026
+            });
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to.match(/already registered/i);
+        });
+
+        it('Step 2: verifies email OTP and generates setup token', async () => {
+            const s1 = await request(app).post('/api/auth/register/student/initiate').send({
+                name: 'Kavita Verma', email: 'kavita@student.edu', rollNumber: '2026CS103', branch: 'IT', batch: 2026
+            });
+            const res = await request(app).post('/api/auth/register/verify-email').send({
+                email: 'kavita@student.edu',
+                otp: s1.body.otpForTesting
+            });
+            expect(res.status).to.equal(200);
+            expect(res.body.setupToken).to.be.a('string');
+            setupToken = res.body.setupToken;
+        });
+
+        it('Step 2: rejects invalid OTP', async () => {
+            const res = await request(app).post('/api/auth/register/verify-email').send({
+                email: 'kavita@student.edu',
+                otp: '000000'
+            });
+            expect(res.status).to.equal(400);
+        });
+
+        it('Step 3: sets student password and returns active JWT token', async () => {
+            const res = await request(app).post('/api/auth/register/set-password').send({
+                setupToken: setupToken,
+                password: 'Password@123'
+            });
+            expect(res.status).to.equal(201);
+            expect(res.body.token).to.be.a('string');
+            expect(res.body.user.role).to.equal('student');
+            studentToken = res.body.token;
+        });
+
+        it('Step 3: rejects setting weak password (< 6 chars)', async () => {
+            const s1 = await request(app).post('/api/auth/register/student/initiate').send({
+                name: 'Weak Pass', email: 'weak@student.edu', rollNumber: '2026CS104', branch: 'ECE', batch: 2026
+            });
+            const s2 = await request(app).post('/api/auth/register/verify-email').send({
+                email: 'weak@student.edu', otp: s1.body.otpForTesting
+            });
+            const res = await request(app).post('/api/auth/register/set-password').send({
+                setupToken: s2.body.setupToken,
+                password: '123'
+            });
+            expect(res.status).to.equal(400);
+        });
+    });
+
+    // =========================================================================
+    // SECTION 3: Company Registration & Multi-Role Login
+    // =========================================================================
+    describe('Company Registration & Multi-Role Login', () => {
+        it('registers a new recruiting company account', async () => {
+            const res = await request(app).post('/api/auth/register/company').send({
+                name: 'TCS Campus HR',
+                email: 'campus@tcs.com',
+                password: 'Company@123',
+                companyName: 'Tata Consultancy Services',
+                industry: 'Information Technology'
+            });
+            expect(res.status).to.equal(201);
+            expect(res.body.token).to.be.a('string');
+            companyToken = res.body.token;
+        });
+
+        it('authenticates Admin with valid credentials', async () => {
+            const res = await request(app).post('/api/auth/login').send({
+                email: 'admin@placement.edu',
+                password: 'Admin@123'
+            });
+            expect(res.status).to.equal(200);
+            expect(res.body.token).to.be.a('string');
+            adminToken = res.body.token;
+        });
+
+        it('authenticates TPO with valid credentials', async () => {
+            const res = await request(app).post('/api/auth/login').send({
+                email: 'tpo@placement.edu',
+                password: 'Tpo@1234'
+            });
+            expect(res.status).to.equal(200);
+            tpoToken = res.body.token;
+        });
+
+        it('rejects login attempt with incorrect password', async () => {
+            const res = await request(app).post('/api/auth/login').send({
+                email: 'admin@placement.edu',
+                password: 'WrongPassword'
+            });
+            expect(res.status).to.equal(401);
+        });
+
+        it('enforces JWT protection on private endpoints', async () => {
+            const res = await request(app).get('/api/admin/users');
+            expect(res.status).to.equal(401);
+        });
+    });
+
+    // =========================================================================
+    // SECTION 4: TPO Management (Drives & Companies)
+    // =========================================================================
+    describe('TPO Management (Drives & Companies)', () => {
+        it('TPO fetches registered companies list', async () => {
+            const res = await request(app).get('/api/tpo/companies').set('Authorization', `Bearer ${tpoToken}`);
+            expect(res.status).to.equal(200);
+            expect(res.body.companies).to.be.an('array');
+        });
+
+        it('TPO creates placement drive with eligibility rules and rounds timetable', async () => {
+            const compRes = await request(app).get('/api/tpo/companies').set('Authorization', `Bearer ${tpoToken}`);
+            const companyId = compRes.body.companies[0]._id;
+            const res = await request(app).post('/api/tpo/drives').set('Authorization', `Bearer ${tpoToken}`).send({
+                company: companyId,
+                jobTitle: 'Systems Engineer',
+                jobDescription: 'Full stack development role',
+                jobType: 'Full-Time',
+                packageLPA: 6.5,
+                eligibility: { minCgpa: 7.0, maxBacklogs: 0, branches: ['CSE', 'IT'] },
+                rounds: [{ name: 'Aptitude', order: 1 }, { name: 'Technical Interview', order: 2 }, { name: 'HR Interview', order: 3 }],
+                applicationDeadline: new Date(Date.now() + 14 * 86400000)
+            });
+            expect(res.status).to.equal(201);
+            driveId = res.body.drive._id;
+        });
+
+        it('TPO publishes placement drive to notify eligible students', async () => {
+            const res = await request(app).put(`/api/tpo/drives/${driveId}/publish`).set('Authorization', `Bearer ${tpoToken}`);
+            expect(res.status).to.equal(200);
+            expect(res.body.drive.status).to.equal('published');
+        });
+    });
+});

@@ -215,4 +215,19 @@ describe('College Placement Management Portal - Backend API', function () {
             expect(res.body.drive.status).to.equal('published');
         });
     });
+
+    describe('Student: Eligibility, Application & Tracking', () => {
+        it('student updates profile with academic info matching eligibility', async () => {
+            const res = await request(app).put('/api/student/profile').set('Authorization', `Bearer ${studentToken}`).send({
+                branch: 'CSE', batch: 2026, academics: { cgpa: 8.5, activeBacklogs: 0, tenthPercentage: 92, twelfthPercentage: 88 }, skills: ['Node.js', 'MongoDB']
+            });
+            expect(res.status).to.equal(200);
+        });
+        it('student checks eligibility explicitly and confirms eligible status', async () => {
+            const elig = await request(app).get(`/api/student/drives/${driveId}/eligibility`).set('Authorization', `Bearer ${studentToken}`);
+            expect(elig.status).to.equal(200);
+            expect(elig.body.eligible).to.equal(true);
+        });
+    });
+
 });

@@ -104,3 +104,63 @@ TPO Portal > renders placement drive creation modal with eligibility criteria an
 TPO Portal > renders company verification and review table : PASS
 Student Portal > renders overview dashboard with placement alerts and drives feed : PASS
 ========================================
+========================================
+College Placement Portal - Jenkins Test Feedback
+========================================
+
+Build Number : 3
+Job Name     : Placement_Portal_CI
+Branch       : utkarsh_kumar
+Commit       : e4737f5be79109a125707175e6a8c6b84ec1d363
+Date         : 2026-08-20 23:00:00
+
+TEST SUMMARY
+----------------------------------------
+Total Tests  : 1
+Passed       : 0
+Failed       : 2
+Skipped      : 0
+Errors       : 0
+Overall      : FAIL
+
+TEST CASE RESULTS
+----------------------------------------
+College Placement Management Portal - Backend API "before all" hook in "College Placement Management Portal - Backend API" (Cannot find module '../controllers/studentController') : FAIL
+========================================
+
+========================================
+College Placement Portal - Jenkins Test Feedback
+========================================
+
+Build Number : 3
+Job Name     : Placement_Portal_CI
+Branch       : utkarsh_gupta
+Commit       : b3cdad68e1ba51c466525df07dc648470fee19d1
+Date         : 2026-08-20 16:45:00
+
+TEST SUMMARY
+----------------------------------------
+Total Tests  : 14
+Passed       : 14
+Failed       : 0
+Skipped      : 0
+Errors       : 0
+Overall      : PASS
+
+TEST CASE RESULTS
+----------------------------------------
+Authentication Pages > renders the Login page with all required headings, inputs, demo buttons, and navigation links : PASS
+Authentication Pages > renders Step-1 Student Registration form with required academic inputs : PASS
+Authentication Pages > renders Step-2 Email OTP Verification view with 6-digit code entry : PASS
+Authentication Pages > renders Step-3 Set Password with live strength checklist rules : PASS
+Authentication Pages > renders 3-Step Forgot Password Wizard with email input and OTP state : PASS
+Authentication Pages > renders Company Self-Registration Portal with placement requirement fields : PASS
+Client Architecture > layout engine provides responsive shell, navbar, and sidebar : PASS
+Client Architecture > API wrapper handles JWT authentication headers and error traps : PASS
+Client Architecture > Auth helper manages session tokens and role guards in localStorage : PASS
+TPO Portal > renders control dashboard with metric counter cards : PASS
+TPO Portal > renders placement drive creation modal with eligibility criteria and rounds : PASS
+TPO Portal > renders company verification and review table : PASS
+Student Portal > renders overview dashboard with placement alerts and drives feed : PASS
+Student Portal > renders eligible placement drives feed with real-time application modal : PASS
+========================================

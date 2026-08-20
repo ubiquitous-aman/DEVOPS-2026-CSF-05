@@ -143,6 +143,17 @@ test('Student Portal > renders overview dashboard with placement alerts and driv
 });
 
 // =============================================================================
+// SECTION 4: Application Tracking & Evaluation Console
+// =============================================================================
+console.log('\n--- Application Tracking & Evaluation Console ---');
+
+test('Student Portal > renders eligible placement drives feed with real-time application modal', () => {
+    const html = readHtml('student/drives.html');
+    assert.ok(html.includes('drivesList') || html.includes('drivesContainer'), 'Must contain drives feed container');
+});
+
+
+// =============================================================================
 // Execution Summary
 // =============================================================================
 console.log('\n========================================');

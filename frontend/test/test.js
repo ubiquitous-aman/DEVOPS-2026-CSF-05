@@ -151,7 +151,11 @@ test('Student Portal > renders eligible placement drives feed with real-time app
     const html = readHtml('student/drives.html');
     assert.ok(html.includes('drivesList') || html.includes('drivesContainer'), 'Must contain drives feed container');
 });
-
+test('Student Portal > renders application history timeline and round stages container', () => {
+    const html = readHtml('student/applications.html');
+    assert.ok(html.includes('applicationsList'), 'Must contain applications list container');
+    assert.ok(html.includes('applications.js'), 'Must bind student applications script');
+});
 
 // =============================================================================
 // Execution Summary

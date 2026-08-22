@@ -156,6 +156,14 @@ test('Student Portal > renders application history timeline and round stages con
     assert.ok(html.includes('applicationsList'), 'Must contain applications list container');
     assert.ok(html.includes('applications.js'), 'Must bind student applications script');
 });
+test('TPO Portal > renders applicant management console with drive selector and round action modals', () => {
+    const html = readHtml('tpo/applicants.html');
+    assert.ok(html.includes('driveSelect'), 'Must have drive selection dropdown');
+    assert.ok(html.includes('applicantsList'), 'Must have applicants listing container');
+    assert.ok(html.includes('actionModal'), 'Must have round evaluation action modal');
+    assert.ok(html.includes('confirmActionBtn'), 'Must have action confirmation button');
+});
+
 
 // =============================================================================
 // Execution Summary

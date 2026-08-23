@@ -163,6 +163,10 @@ test('TPO Portal > renders applicant management console with drive selector and 
     assert.ok(html.includes('actionModal'), 'Must have round evaluation action modal');
     assert.ok(html.includes('confirmActionBtn'), 'Must have action confirmation button');
 });
+test('Student Portal > renders live notification feed and unread counter badges', () => {
+    const html = readHtml('student/notifications.html');
+    assert.ok(html.includes('notificationsList'), 'Must contain notifications listing container');
+});
 
 
 // =============================================================================

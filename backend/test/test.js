@@ -228,6 +228,20 @@ describe('College Placement Management Portal - Backend API', function () {
             expect(elig.status).to.equal(200);
             expect(elig.body.eligible).to.equal(true);
         });
+        it('student applies to published drive and receives confirmation', async () => {
+            const apply = await request(app).post(`/api/student/drives/${driveId}/apply`).set('Authorization', `Bearer ${studentToken}`);
+            expect(apply.status).to.equal(201);
+            applicationId = apply.body.application._id;
+        });
+        it('student cannot apply twice to the same drive', async () => {
+            const res = await request(app).post(`/api/student/drives/${driveId}/apply`).set('Authorization', `Bearer ${studentToken}`);
+            expect(res.status).to.equal(400);
+            expect(res.body.message).to.match(/already applied/i);
+        });
+        it('student tracks application history and current round status', async () => {
+            const res = await request(app).get('/api/student/applications').set('Authorization', `Bearer ${studentToken}`);
+            expect(res.status).to.equal(200);
+            expect(res.body.applications.length).to.be.at.least(1);
+        });
     });
-
 });

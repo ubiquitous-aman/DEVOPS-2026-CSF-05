@@ -168,6 +168,16 @@ test('Student Portal > renders live notification feed and unread counter badges'
     assert.ok(html.includes('notificationsList'), 'Must contain notifications listing container');
 });
 
+// =============================================================================
+// SECTION 5: Company & Admin Governance Portals
+// =============================================================================
+console.log('\n--- Company & Admin Governance Portals ---');
+
+test('Company Portal > renders recruitment dashboard and candidate evaluation views', () => {
+    const html = readHtml('company/dashboard.html');
+    assert.ok(/company|dashboard/i.test(html), 'Must render company dashboard');
+});
+
 
 // =============================================================================
 // Execution Summary

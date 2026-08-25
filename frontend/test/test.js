@@ -177,6 +177,10 @@ test('Company Portal > renders recruitment dashboard and candidate evaluation vi
     const html = readHtml('company/dashboard.html');
     assert.ok(/company|dashboard/i.test(html), 'Must render company dashboard');
 });
+test('Admin Portal > renders system audit trail logs table with action filters', () => {
+    const html = readHtml('admin/logs.html');
+    assert.ok(/logsTable|activityLogs/i.test(html), 'Must render audit trail logs table');
+});
 
 
 // =============================================================================

@@ -181,6 +181,10 @@ test('Admin Portal > renders system audit trail logs table with action filters',
     const html = readHtml('admin/logs.html');
     assert.ok(/logsTable|activityLogs/i.test(html), 'Must render audit trail logs table');
 });
+test('Admin Portal > renders user provisioning console and role management table', () => {
+    const html = readHtml('admin/users.html');
+    assert.ok(/usersTable|addUserBtn/i.test(html), 'Must render user management console');
+});
 
 
 // =============================================================================

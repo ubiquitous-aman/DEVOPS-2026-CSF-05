@@ -186,6 +186,17 @@ test('Admin Portal > renders user provisioning console and role management table
     assert.ok(/usersTable|addUserBtn/i.test(html), 'Must render user management console');
 });
 
+// =============================================================================
+// SECTION 6: Landing Page & Analytics
+// =============================================================================
+console.log('\n--- Landing Page & Analytics ---');
+
+test('Public Portal > renders responsive institutional landing page with brand hero', () => {
+    const html = readHtml('index.html');
+    assert.ok(/SKIT/i.test(html), 'Must render SKIT institution branding');
+    assert.ok(/login\.html/i.test(html), 'Must link to login page');
+});
+
 
 // =============================================================================
 // Execution Summary

@@ -196,6 +196,10 @@ test('Public Portal > renders responsive institutional landing page with brand h
     assert.ok(/SKIT/i.test(html), 'Must render SKIT institution branding');
     assert.ok(/login\.html/i.test(html), 'Must link to login page');
 });
+test('TPO Portal > renders placement statistics charts and package analytics report', () => {
+    const html = readHtml('tpo/stats.html');
+    assert.ok(/chart|stats|package/i.test(html), 'Must render placement statistics components');
+});
 
 
 // =============================================================================
